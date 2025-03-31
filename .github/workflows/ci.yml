@@ -16,15 +16,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get Flutter version from FVM or Flutter SDK
+      - name: Get Flutter version
         run: |
-          if [ -f ".flutter-version" ]; then
-            echo "Using FVM version"
-            FLUTTER_VERSION=$(cat .flutter-version)
-          else
-            echo "Using pubspec.yaml version"
-            FLUTTER_VERSION=$(grep 'flutter:' pubspec.yaml | awk '{print $2}' | tr -d '"')
+          # First try to get version from README.md
+          FLUTTER_VERSION=$(grep 'Flutter Version:' README.md | awk '{print $3}')
+
+          # If not found in README.md, try FVM or pubspec.yaml
+          if [ -z "$FLUTTER_VERSION" ]; then
+            if [ -f ".flutter-version" ]; then
+              echo "Using FVM version"
+              FLUTTER_VERSION=$(cat .flutter-version)
+            else
+              echo "Using pubspec.yaml version"
+              FLUTTER_VERSION=$(grep 'flutter:' pubspec.yaml | awk '{print $2}' | tr -d '"')
+            fi
           fi
+
           echo "Flutter version: $FLUTTER_VERSION"
           echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
 

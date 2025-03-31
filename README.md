@@ -1,5 +1,7 @@
 # untitled
 
+Flutter Version: 3.29.0
+
 A new Flutter project.
 
 ## Getting Started
